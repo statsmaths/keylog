@@ -4,7 +4,7 @@
 // Create a global variable that stores all of the output data; initialize it
 // with the header row fror a CSV file
 var keys = [
-  "time,type,key,key_code,alt_key,ctrl_key,meta_key,shift_key,range_start,range_end"
+  "time,type,key,key_code,alt_key,ctrl_key,meta_key,shift_key,is_repeat,range_start,range_end"
 ];
 ibox = document.getElementById("lname");
 ibox.value = '';
@@ -14,19 +14,20 @@ ibox.value = '';
 // programs. It would be more JavaScript oriented to do this as JSON.
 ibox.addEventListener('keydown', (res) => {
   var key_name = (res.key === "," ? "\",\"" : res.key);
-  if (key_name === "'") { key_name = "DoubleQuote" };
-  if (key_name === '"') { key_name = 'SingleQuote' };
-  if (key_name === ' ') { key_name = 'Space' };
+  if (key_name === "\"") { key_name = "\"\"\"\"" };
+  if (key_name === "'") { key_name = "\"'\"" };
+  if (key_name === ' ') { key_name = '\" \"' };
 
   keys.push(
     Date.now() + "," +
     "down," +
     key_name + "," +
-    res.keyCode + "," +
+    res.code + "," +
     res.altKey + "," +
     res.ctrlKey + "," +
     res.metaKey + "," +
     res.shiftKey + "," +
+    res.repeat + "," +
     ibox.selectionStart + "," +
     ibox.selectionEnd
   )
@@ -35,19 +36,20 @@ ibox.addEventListener('keydown', (res) => {
 // Add a record when a key is released when focused on the textbox element.
 ibox.addEventListener('keyup', (res) => {
   var key_name = (res.key === "," ? "\",\"" : res.key);
-  if (key_name === "'") { key_name = "DoubleQuote" };
-  if (key_name === '"') { key_name = 'SingleQuote' };
-  if (key_name === ' ') { key_name = 'Space' };
+  if (key_name === "\"") { key_name = "\"\"\"\"" };
+  if (key_name === "'") { key_name = "\"'\"" };
+  if (key_name === ' ') { key_name = '\" \"' };
 
   keys.push(
     Date.now() + "," +
     "up," +
     key_name + "," +
-    res.keyCode + "," +
+    res.code + "," +
     res.altKey + "," +
     res.ctrlKey + "," +
     res.metaKey + "," +
     res.shiftKey + "," +
+    res.repeat + "," +
     ibox.selectionStart + "," +
     ibox.selectionEnd
   );
@@ -57,11 +59,27 @@ ibox.addEventListener('keyup', (res) => {
 ibox.addEventListener('click', (res) => {
   keys.push(
     Date.now() + "," +
-    "click,Mouse,-1," + // Let's avoid missing values by filling these in
+    "click,,," +
     res.altKey + "," +
     res.ctrlKey + "," +
     res.metaKey + "," +
-    res.shiftKey + "," +
+    res.shiftKey + ",false," +
+    ibox.selectionStart + "," +
+    ibox.selectionEnd
+  );
+});
+
+// Add a record when content is pasted into the box. Yes, this is possible on
+// most modern browsers.
+ibox.addEventListener('paste', (res) => {
+  let content = res.clipboardData.getData("text");
+  content = content.replace(/\"/g, "\"\"");
+
+  keys.push(
+    Date.now() + "," +
+    "paste," +
+    "\"" + content + "\"," +
+    ",false,false,false,false,false," +
     ibox.selectionStart + "," +
     ibox.selectionEnd
   );
