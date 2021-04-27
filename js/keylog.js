@@ -85,6 +85,7 @@ ibox.addEventListener('paste', (res) => {
   );
 });
 
+// Download the current dataset from the DOM as a CSV file
 downloadLink = document.getElementById("downloadAnchorElem");
 downloadLink.addEventListener('click', () => {
   var dataStr = "data:text/csv;charset=utf-8," +
@@ -96,8 +97,11 @@ downloadLink.addEventListener('click', () => {
   downloadLink.setAttribute("download", "keylogs-" + today + ".csv");
 });
 
+// Clear the textbox and reset the dataset
 clearLink = document.getElementById("resetTexbox");
 clearLink.addEventListener('click', () => {
   ibox.value = '';
-  ibox.disabled = false;
+  keys = [
+    "time,type,key,key_code,alt_key,ctrl_key,meta_key,shift_key,is_repeat,range_start,range_end"
+  ]
 });
