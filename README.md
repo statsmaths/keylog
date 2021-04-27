@@ -9,8 +9,8 @@ number of different pedagolical purposes:
 - To demonstrate how easy it is to build a fairly invasive picture of one's
 activity online using a small amount of code running in the browser. This
 can be done as an activity without requiring any technical prerequisites.
-- The output data is very interesting from a data science perspective. Make
-use of it is a great way to demonstrate different kinds of cleaning tasks,
+- The output data is very interesting from a data science perspective. I make
+use of it as a way to demonstrate different kinds of cleaning tasks,
 particularly the use of date-time manipulation, table pivots, and window
 functions.
 - Keylogging is a common source of data in cognitive science and experimental

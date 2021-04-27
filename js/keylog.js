@@ -1,8 +1,17 @@
+// Author: Taylor Arnold (tarnold2@richmond.edu)
+// Date: 2021-04-27
+
+// Create a global variable that stores all of the output data; initialize it
+// with the header row fror a CSV file
 var keys = [
   "time,type,key,key_code,alt_key,ctrl_key,meta_key,shift_key,range_start,range_end"
 ];
 ibox = document.getElementById("lname");
 ibox.value = '';
+
+// Add a record when a key is pressed when focused on the textbox element.
+// We will store it as a CSV file to make it easy to read into Excel or other
+// programs. It would be more JavaScript oriented to do this as JSON.
 ibox.addEventListener('keydown', (res) => {
   var key_name = (res.key === "," ? "\",\"" : res.key);
   if (key_name === "'") { key_name = "DoubleQuote" };
@@ -17,9 +26,13 @@ ibox.addEventListener('keydown', (res) => {
     res.altKey + "," +
     res.ctrlKey + "," +
     res.metaKey + "," +
-    res.shiftKey + ",,"
+    res.shiftKey + "," +
+    ibox.selectionStart + "," +
+    ibox.selectionEnd
   )
 });
+
+// Add a record when a key is released when focused on the textbox element.
 ibox.addEventListener('keyup', (res) => {
   var key_name = (res.key === "," ? "\",\"" : res.key);
   if (key_name === "'") { key_name = "DoubleQuote" };
@@ -34,13 +47,17 @@ ibox.addEventListener('keyup', (res) => {
     res.altKey + "," +
     res.ctrlKey + "," +
     res.metaKey + "," +
-    res.shiftKey + ",,"
+    res.shiftKey + "," +
+    ibox.selectionStart + "," +
+    ibox.selectionEnd
   );
 });
+
+// Add a record when the mouse is clicked in the textbox element.
 ibox.addEventListener('click', (res) => {
   keys.push(
     Date.now() + "," +
-    "click,,," +
+    "click,Mouse,-1," + // Let's avoid missing values by filling these in
     res.altKey + "," +
     res.ctrlKey + "," +
     res.metaKey + "," +
