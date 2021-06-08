@@ -19,7 +19,7 @@ ibox.addEventListener('keydown', (res) => {
   if (key_name === ' ') { key_name = '\" \"' };
 
   keys.push(
-    res.timeStamp + "," +
+    Date.now() + "," +
     "down," +
     key_name + "," +
     res.code + "," +
@@ -28,8 +28,8 @@ ibox.addEventListener('keydown', (res) => {
     res.metaKey + "," +
     res.shiftKey + "," +
     res.repeat + "," +
-    res.target.selectionStart + "," +
-    res.target.selectionEnd
+    ibox.selectionStart + "," +
+    ibox.selectionEnd
   )
 });
 
@@ -41,7 +41,7 @@ ibox.addEventListener('keyup', (res) => {
   if (key_name === ' ') { key_name = '\" \"' };
 
   keys.push(
-    res.timeStamp + "," +
+    Date.now() + "," +
     "up," +
     key_name + "," +
     res.code + "," +
@@ -50,22 +50,22 @@ ibox.addEventListener('keyup', (res) => {
     res.metaKey + "," +
     res.shiftKey + "," +
     res.repeat + "," +
-    res.target.selectionStart + "," +
-    res.target.selectionEnd
+    ibox.selectionStart + "," +
+    ibox.selectionEnd
   );
 });
 
 // Add a record when the mouse is clicked in the textbox element.
 ibox.addEventListener('click', (res) => {
   keys.push(
-    res.timeStamp + "," +
+    Date.now() + "," +
     "click,,," +
     res.altKey + "," +
     res.ctrlKey + "," +
     res.metaKey + "," +
     res.shiftKey + ",false," +
-    res.target.selectionStart + "," +
-    res.target.selectionEnd
+    ibox.selectionStart + "," +
+    ibox.selectionEnd
   );
 });
 
@@ -76,28 +76,27 @@ ibox.addEventListener('paste', (res) => {
   content = content.replace(/\"/g, "\"\"");
 
   keys.push(
-    res.timeStamp + "," +
+    Date.now() + "," +
     "paste," +
     "\"" + content + "\"," +
     ",false,false,false,false,false," +
-    res.target.selectionStart + "," +
-    res.target.selectionEnd
+    ibox.selectionStart + "," +
+    ibox.selectionEnd
   );
 });
 
 // Add a record when content is entered into the text box.
 ibox.addEventListener('input', (res) => {
-  var content = res.data || "";
-  content = content.replace(/\"/g, "\"\"");
-
   keys.push(
-    res.timeStamp + "," +
+    Date.now() + "," +
     "input," +
-    "\"" + content + "\"," + res.inputType +
+    "\"" + res.data + "\"," + res.inputType +
     ",false,false,false,false,false," +
-    res.target.selectionStart + "," +
-    res.target.selectionEnd
+    ibox.selectionStart + "," +
+    ibox.selectionEnd
   );
+
+  console.log(res.getTargetRanges());
 });
 
 // Download the current dataset from the DOM as a CSV file
@@ -107,7 +106,6 @@ downloadLink.addEventListener('click', () => {
                 encodeURIComponent(keys.join('\n'));
   var dlAnchorElem = document.getElementById('downloadAnchorElem');
   let today = Date.now();
-  ibox.disabled = true;
 
   downloadLink.setAttribute("href", dataStr);
   downloadLink.setAttribute("download", "keylogs-" + today + ".csv");
@@ -116,7 +114,6 @@ downloadLink.addEventListener('click', () => {
 // Clear the textbox and reset the dataset
 clearLink = document.getElementById("resetTexbox");
 clearLink.addEventListener('click', () => {
-  ibox.disabled = false;
   ibox.value = '';
   keys = [
     "time,type,key,key_code,alt_key,ctrl_key,meta_key,shift_key,is_repeat,range_start,range_end"
