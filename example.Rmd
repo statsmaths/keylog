@@ -14,7 +14,7 @@ application which can be found here:
   - https://statsmaths.github.io/keylog/
 
 It generates a data set of key strokes that is stored locally in the DOM and
-can be downloaded as a CSV file. To start, let's load the R package. 
+can be downloaded as a CSV file. To start, let's load the R package.
 
 ```{r message=FALSE}
 library(keylog)
@@ -79,7 +79,7 @@ events <- klog_events(dt)
 events
 ```
 
-This data set is perfect for addressing psycho-linguistic questions about how 
+This data set is perfect for addressing psycho-linguistic questions about how
 specific letters and words are being typed. Additional visualizations of this
 data are included below.
 
@@ -104,7 +104,7 @@ section correctly.
 
 # A bit of Visualization
 
-Finally, let's see how we can visualize the key press data. We load some 
+Finally, let's see how we can visualize the key press data. We load some
 functions for data visualization:
 
 ```{r, message=FALSE}
@@ -140,6 +140,3 @@ events %>%
     scale_y_continuous(labels = NULL) +
     theme_minimal()
 ```
-
-
-
