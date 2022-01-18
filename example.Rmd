@@ -140,3 +140,55 @@ events %>%
     scale_y_continuous(labels = NULL) +
     theme_minimal()
 ```
+
+Or the two together
+
+```{r}
+events %>%
+  filter(time > 3400, time < 10000) %>%
+  mutate(key = fct_inorder(key)) %>%
+  mutate(rn = row_number()) %>%
+  ggplot(aes(time / 1000, rn, color = modkey)) +
+    geom_segment(aes(xend = time_up / 1000, yend = rn)) +
+    geom_point() +
+    geom_point(aes(x = time_up / 1000, y = rn)) +
+    geom_text(aes(x = time / 1000 - 0.1, label = key), size = 5, hjust = 1, show.legend = FALSE) +
+    scale_y_continuous(labels = NULL, breaks = NULL) +
+    labs(color = "Modifier Key?", x = "Time (seconds)", y = "") +
+    theme_minimal()
+```
+
+```{r}
+key_duration
+interstroke_interval
+time_between_keys
+interword_interval
+
+segs <- tibble(
+  x = c(1803, 1120, 640, 2133),
+  xend = c(1918, 1475, 733, 2237),
+  y = c(8, 5, 2.2, 10),
+  label = c("Key Duration", "Interstroke Interval", "Time Between Keys", "Interword Interval")
+)
+
+events %>%
+  mutate(key = if_else(key == " ", "Space", key)) %>%
+  slice_head(n = 14) %>%
+  mutate(key = fct_inorder(key)) %>%
+  mutate(rn = row_number()) %>%
+  ggplot(aes(time, rn)) +
+    geom_text(aes(x = time - 30, label = key), size = 4, hjust = 1) +
+    geom_segment(aes(xend = time_up, yend = rn), color = "grey70") +
+    geom_segment(aes(x = x, xend = xend, y = y - 0.5, yend = y - 0.5), data = segs, size = 1, arrow = arrow(length = unit(0.01, "npc"), type="closed")) +
+    geom_segment(aes(x = xend, xend = x, y = y - 0.5, yend = y - 0.5), data = segs, size = 1, arrow = arrow(length = unit(0.01, "npc"), type="closed")) +
+    geom_text(aes(x = (x + xend) / 2, y = y - 1.0, label = label), data = segs, color = "red") +
+    labs(x = "Time (milliseconds)", y = "") +
+    scale_y_continuous(labels = NULL) +
+    theme_minimal()
+
+ggsave("metrics.jpg", height = 6, width = 9)
+
+
+
+
+```

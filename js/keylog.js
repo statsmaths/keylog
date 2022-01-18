@@ -8,6 +8,7 @@ var keys = [
 ];
 ibox = document.getElementById("lname");
 ibox.value = '';
+var lastmouse = 0;
 
 // Add a record when a key is pressed when focused on the textbox element.
 // We will store it as a CSV file to make it easy to read into Excel or other
@@ -68,6 +69,24 @@ ibox.addEventListener('click', (res) => {
     res.target.selectionEnd
   );
 });
+
+// Add a row when there is a movement of the mouse 
+document.body.addEventListener('mousemove', (res) => {
+  if (res.timeStamp > lastmouse + 250) 
+  {
+    lastmouse = res.timeStamp;
+    keys.push(
+      res.timeStamp + "," +
+      "mouse,,," +
+      res.altKey + "," +
+      res.ctrlKey + "," +
+      res.metaKey + "," +
+      res.shiftKey + ",false," +
+      res.pageX + "," +
+      res.pageY
+    )
+  }
+);
 
 // Add a record when content is pasted into the box. Yes, this is possible on
 // most modern browsers.
