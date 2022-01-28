@@ -70,9 +70,9 @@ ibox.addEventListener('click', (res) => {
   );
 });
 
-// Add a row when there is a movement of the mouse 
+// Add a row when there is a movement of the mouse
 document.body.addEventListener('mousemove', (res) => {
-  if (res.timeStamp > lastmouse + 250) 
+  if (res.timeStamp > lastmouse + 250)
   {
     lastmouse = res.timeStamp;
     keys.push(
