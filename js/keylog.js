@@ -86,7 +86,7 @@ document.body.addEventListener('mousemove', (res) => {
       res.pageY
     )
   }
-);
+});
 
 // Add a record when content is pasted into the box. Yes, this is possible on
 // most modern browsers.
