@@ -1,143 +1,119 @@
 // Author: Taylor Arnold (tarnold2@richmond.edu)
-// Date: 2021-04-27
+// Date: 2022-02-22
 
 // Create a global variable that stores all of the output data; initialize it
 // with the header row fror a CSV file
-var keys = [
-  "time,type,key,key_code,alt_key,ctrl_key,meta_key,shift_key,is_repeat,range_start,range_end"
-];
-ibox = document.getElementById("lname");
+var startRecord = {
+  'e': 's',
+  'language': navigator.language,
+  'useragent': navigator.userAgent,
+  'starttime':  Date.now()
+};
+var dset = [startRecord];
+var delay = 1000;
+var next_saved = delay;
+ibox = document.getElementById('lname');
 ibox.value = '';
-var lastmouse = 0;
 
 // Add a record when a key is pressed when focused on the textbox element.
-// We will store it as a CSV file to make it easy to read into Excel or other
-// programs. It would be more JavaScript oriented to do this as JSON.
 ibox.addEventListener('keydown', (res) => {
-  var key_name = (res.key === "," ? "\",\"" : res.key);
-  if (key_name === "\"") { key_name = "\"\"\"\"" };
-  if (key_name === "'") { key_name = "\"'\"" };
-  if (key_name === ' ') { key_name = '\" \"' };
+  var nline = {
+    't': res.timeStamp,
+    'e': 'd',
+    'k': res.key,
+    'c': res.code,
+    'ss': res.target.selectionStart,
+    'se': res.target.selectionEnd
+  };
 
-  keys.push(
-    res.timeStamp + "," +
-    "down," +
-    key_name + "," +
-    res.code + "," +
-    res.altKey + "," +
-    res.ctrlKey + "," +
-    res.metaKey + "," +
-    res.shiftKey + "," +
-    res.repeat + "," +
-    res.target.selectionStart + "," +
-    res.target.selectionEnd
-  )
+  if (res.altKey) { nline.ak = true; }
+  if (res.ctrlKey) { nline.ck = true; }
+  if (res.metaKey) { nline.mk = true; }
+  if (res.shiftKey) { nline.sk = true; }
+  if (res.repeat) { nline.r = true; }
+
+  dset.push(nline);
 });
 
 // Add a record when a key is released when focused on the textbox element.
 ibox.addEventListener('keyup', (res) => {
-  var key_name = (res.key === "," ? "\",\"" : res.key);
-  if (key_name === "\"") { key_name = "\"\"\"\"" };
-  if (key_name === "'") { key_name = "\"'\"" };
-  if (key_name === ' ') { key_name = '\" \"' };
+  var nline = {
+    't': res.timeStamp,
+    'e': 'u',
+    'k': res.key,
+    'c': res.code,
+    'ss': res.target.selectionStart,
+    'se': res.target.selectionEnd
+  };
 
-  keys.push(
-    res.timeStamp + "," +
-    "up," +
-    key_name + "," +
-    res.code + "," +
-    res.altKey + "," +
-    res.ctrlKey + "," +
-    res.metaKey + "," +
-    res.shiftKey + "," +
-    res.repeat + "," +
-    res.target.selectionStart + "," +
-    res.target.selectionEnd
-  );
+  if (res.altKey) { nline.ak = true; }
+  if (res.ctrlKey) { nline.ck = true; }
+  if (res.metaKey) { nline.mk = true; }
+  if (res.shiftKey) { nline.sk = true; }
+  if (res.repeat) { nline.r = true; }
+
+  dset.push(nline);
 });
 
 // Add a record when the mouse is clicked in the textbox element.
 ibox.addEventListener('click', (res) => {
-  keys.push(
-    res.timeStamp + "," +
-    "click,,," +
-    res.altKey + "," +
-    res.ctrlKey + "," +
-    res.metaKey + "," +
-    res.shiftKey + ",false," +
-    res.target.selectionStart + "," +
-    res.target.selectionEnd
-  );
+  var nline = {
+    't': res.timeStamp,
+    'e': 'm',
+    'ss': res.target.selectionStart,
+    'se': res.target.selectionEnd
+  };
+
+  if (res.altKey) { nline.ak = true; }
+  if (res.ctrlKey) { nline.ck = true; }
+  if (res.metaKey) { nline.mk = true; }
+  if (res.shiftKey) { nline.sk = true; }
+  if (res.repeat) { nline.r = true; }
+
+  dset.push(nline);
 });
 
-// Add a row when there is a movement of the mouse
-document.body.addEventListener('mousemove', (res) => {
-  if (res.timeStamp > lastmouse + 250)
-  {
-    lastmouse = res.timeStamp;
-    keys.push(
-      res.timeStamp + "," +
-      "mouse,,," +
-      res.altKey + "," +
-      res.ctrlKey + "," +
-      res.metaKey + "," +
-      res.shiftKey + ",false," +
-      res.pageX + "," +
-      res.pageY
-    )
-  }
-});
-
-// Add a record when content is pasted into the box. Yes, this is possible on
-// most modern browsers.
-ibox.addEventListener('paste', (res) => {
-  let content = res.clipboardData.getData("text");
-  content = content.replace(/\"/g, "\"\"");
-
-  keys.push(
-    res.timeStamp + "," +
-    "paste," +
-    "\"" + content + "\"," +
-    ",false,false,false,false,false," +
-    res.target.selectionStart + "," +
-    res.target.selectionEnd
-  );
-});
-
-// Add a record when content is entered into the text box.
+// Add a record when there is an input.
 ibox.addEventListener('input', (res) => {
-  var content = res.data || "";
-  content = content.replace(/\"/g, "\"\"");
+  var nline = {
+    't': res.timeStamp,
+    'e': 'i',
+    'v':  ( res.data || "" ),
+    'ss': res.target.selectionStart,
+    'se': res.target.selectionEnd
+  };
 
-  keys.push(
-    res.timeStamp + "," +
-    "input," +
-    "\"" + content + "\"," + res.inputType +
-    ",false,false,false,false,false," +
-    res.target.selectionStart + "," +
-    res.target.selectionEnd
-  );
+  // If it has been a while, store the current text as well:
+  if (res.timeStamp > next_saved)
+  {
+    next_saved = res.timeStamp + delay;
+    dset.push({
+      't': res.timeStamp,
+      'e': 'c',
+      'v': ibox.value
+    });
+  }
+
+  dset.push(nline);
 });
 
-// Download the current dataset from the DOM as a CSV file
+// Download the current dataset from the DOM as a JSON file
 downloadLink = document.getElementById("downloadAnchorElem");
-downloadLink.addEventListener('click', () => {
-  var dataStr = "data:text/csv;charset=utf-8," +
-                encodeURIComponent(keys.join('\n'));
+downloadLink.addEventListener('click', (res) => {
+  // add one last record of the full final text
+  dset.push({
+    't': res.timeStamp,
+    'e': 'c',
+    'v': ibox.value
+  });
+
+  // collapse records to a string
+  var dataStr = "data:application/json;charset=utf-8," +
+                encodeURIComponent(JSON.stringify(dset));
   var dlAnchorElem = document.getElementById('downloadAnchorElem');
+
+  // Copy the records into the DOM
   let today = Date.now();
-  ibox.disabled = true;
-
   downloadLink.setAttribute("href", dataStr);
-  downloadLink.setAttribute("download", "keylogs-" + today + ".csv");
-});
-
-// Clear the textbox and reset the dataset
-clearLink = document.getElementById("resetTexbox");
-clearLink.addEventListener('click', () => {
-  ibox.disabled = false;
-  ibox.value = '';
-  keys = [
-    "time,type,key,key_code,alt_key,ctrl_key,meta_key,shift_key,is_repeat,range_start,range_end"
-  ]
+  downloadLink.setAttribute("download", "keylogs-" + today + ".json");
 });
